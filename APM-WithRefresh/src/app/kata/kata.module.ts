@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 
-import { ToyListComponent } from './toy-list/toy-list.component';
-import { ToyDetailComponent } from './toy-detail/toy-detail.component';
-import { ToyContainerComponent } from './toy-container/toy-container.component';
+import { KataListComponent } from './kata-list/kata-list.component';
+import { KataDetailComponent } from './kata-detail/kata-detail.component';
+import { KataContainerComponent } from './kata-container/kata-container.component';
 
 import { SharedModule } from '../shared/shared.module';
 
@@ -15,14 +15,14 @@ import { SharedModule } from '../shared/shared.module';
     RouterModule.forChild([
       {
         path: ':id',
-        component: ToyContainerComponent
+        component: KataContainerComponent
       }
     ])
   ],
   declarations: [
-    ToyContainerComponent,
-    ToyListComponent,
-    ToyDetailComponent
+    KataContainerComponent,
+    KataListComponent,
+    KataDetailComponent
   ]
 })
-export class ToyModule { }
+export class KataModule { }

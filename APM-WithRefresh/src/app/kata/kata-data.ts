@@ -1,12 +1,12 @@
-import { Toy } from './toy';
+import { Kata } from './kata';
 
-export class ToyData {
+export class KataData {
 
-  static toys: Toy[] = [
+  static katas: Kata[] = [
     {
       'id': 1,
-      'toyName': 'Toy1',
-      'toyCode': 'GDN-0011',
+      'kataName': 'Kata1',
+      'kataCode': 'GDN-0011',
       'description': 'Leaf rake with 48-inch wooden handle',
       'price': 19.95,
       'categoryId': 1,
@@ -14,8 +14,8 @@ export class ToyData {
     },
     {
       'id': 2,
-      'toyName': 'Toy2',
-      'toyCode': 'GDN-0023',
+      'kataName': 'Kata2',
+      'kataCode': 'GDN-0023',
       'description': '15 gallon capacity rolling garden cart',
       'price': 32.99,
       'categoryId': 1,
@@ -23,8 +23,8 @@ export class ToyData {
     },
     {
       'id': 5,
-      'toyName': 'Toy3',
-      'toyCode': 'TBX-0048',
+      'kataName': 'Kata3',
+      'kataCode': 'TBX-0048',
       'description': 'Curved claw steel hammer',
       'price': 8.9,
       'categoryId': 3,
@@ -32,8 +32,8 @@ export class ToyData {
     },
     {
       'id': 8,
-      'toyName': 'Toy4',
-      'toyCode': 'TBX-0022',
+      'kataName': 'Kata4',
+      'kataCode': 'TBX-0022',
       'description': '15-inch steel blade hand saw',
       'price': 11.55,
       'categoryId': 3,
@@ -41,8 +41,8 @@ export class ToyData {
     },
     {
       'id': 10,
-      'toyName': 'Toy5',
-      'toyCode': 'GMG-0042',
+      'kataName': 'Kata5',
+      'kataCode': 'GMG-0042',
       'description': 'Standard two-button video game controller',
       'price': 35.95,
       'categoryId': 5,

@@ -4,9 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { ProductListComponent } from './product-list/product-list.component';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
-import { ProductShellComponent } from './product-shell/product-shell.component';
 
 import { SharedModule } from '../shared/shared.module';
+import { ProductContainerComponent } from './product-container/product-container.component';
 
 @NgModule({
   imports: [
@@ -15,12 +15,12 @@ import { SharedModule } from '../shared/shared.module';
     RouterModule.forChild([
       {
         path: ':id',
-        component: ProductShellComponent
+        component: ProductContainerComponent
       }
     ])
   ],
   declarations: [
-    ProductShellComponent,
+    ProductContainerComponent,
     ProductListComponent,
     ProductDetailComponent
   ]

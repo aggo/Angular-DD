@@ -21,6 +21,14 @@ import { PageNotFoundComponent } from './page-not-found.component';
             path: 'cars',
             loadChildren: './cars/car.module#CarModule'
           },
+          {
+            path: 'toys',
+            loadChildren: './toys/toy.module#ToyModule'
+          },
+          {
+            path: 'kata',
+            loadChildren: './kata/kata.module#KataModule'
+          },
           {path: '', redirectTo: 'welcome', pathMatch: 'full'}
         ]
       },
