@@ -13,3 +13,7 @@ div.card {
 .table {
   margin-top: 10px
 }
+
+.pointer-on-hover {
+  cursor: pointer;
+}

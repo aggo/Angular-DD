@@ -1,0 +1,30 @@
+<div class="card">
+  <div class="card-header">
+    {{pageTitle}}
+  </div>
+
+  <div class='card-body'
+       *ngIf="toys$ | async as toys">
+    <div class='list-group'>
+      <button type='button'
+              class='list-group-item'
+              *ngFor='let toy of toys'
+              [ngClass]="{'active': toy?.id === (selectedToyId$ | async)}"
+              (click)='onSelected(toy.id)'>
+        {{ toy.toyName }} ({{ toy.category }})
+      </button>
+    </div>
+
+    <div class="row mt-4 mr-2 pull-right">
+      <button class="btn btn-outline-primary"
+              (click)='onRefresh()'>
+        Refresh Data
+      </button>
+    </div>
+  </div>
+
+</div>
+<div *ngIf='errorMessage'
+     class='alert alert-danger'>
+  Error: {{ errorMessage }}
+</div>

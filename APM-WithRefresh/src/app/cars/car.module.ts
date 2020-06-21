@@ -7,6 +7,7 @@ import { CarDetailComponent } from './car-detail/car-detail.component';
 import { CarContainerComponent } from './car-container/car-container.component';
 
 import { SharedModule } from '../shared/shared.module';
+import { SupplierModule } from '../suppliers/supplier.module';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import { SharedModule } from '../shared/shared.module';
         path: ':id',
         component: CarContainerComponent
       }
-    ])
+    ]),
+    SupplierModule
   ],
   declarations: [
     CarContainerComponent,

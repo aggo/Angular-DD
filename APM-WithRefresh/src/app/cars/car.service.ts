@@ -7,11 +7,20 @@ import { catchError, filter, map, shareReplay, switchMap, tap } from 'rxjs/opera
 import { Car } from './car';
 import { CarCategoryService } from '../car-categories/car-category.service';
 import { SupplierService } from '../suppliers/supplier.service';
+import { Supplier } from '../suppliers/supplier';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CarService {
+
+  constructor(
+    private http: HttpClient,
+    private carCategoryService: CarCategoryService,
+    private supplierService: SupplierService
+  ) {
+  }
+
   private carsUrl = 'api/cars';
 
   // Use ReplaySubject to "replay" values to new subscribers
@@ -98,16 +107,31 @@ export class CarService {
     )
   );
 
-  constructor(
-    private http: HttpClient,
-    private carCategoryService: CarCategoryService,
-    private supplierService: SupplierService
-  ) {
-  }
+  // suppliers
+  // Retains the currently selected supplier Id
+  private selectedSupplierSource = new ReplaySubject<number>(1);
+  // Expose the selectedCar as an observable for use by any components
+  selectedSupplierChanges$ = this.selectedSupplierSource.asObservable();
+
+  selectedSupplier$ = combineLatest(
+    this.selectedSupplierChanges$,
+    this.selectedCarSuppliers$
+  ).pipe(
+    map(([selectedSupplierId, suppliers]) =>
+      suppliers.find(supplier => supplier.id === selectedSupplierId) as Supplier
+    ),
+    tap(s => console.log('changeSelectedSupplier', s)),
+    shareReplay({bufferSize: 1, refCount: false})
+  );
 
   // Change the selected car
   changeSelectedCar(selectedCarId: number | null): void {
     this.selectedCarSource.next(selectedCarId);
+  }
+
+  // Change the selected supplier
+  changeSelectedSupplier(selectedSupplierId: number | null): void {
+    this.selectedSupplierSource.next(selectedSupplierId);
   }
 
   // AntiPattern: Nested (or chained) http calls results in nested observables

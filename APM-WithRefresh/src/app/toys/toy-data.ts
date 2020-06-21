@@ -1,21 +1,21 @@
-import { Car } from './car';
+import { Toy } from './toy';
 
-export class CarData {
+export class ToyData {
 
-  static cars: Car[] = [
+  static toys: Toy[] = [
     {
       'id': 1,
-      'carName': 'Car1',
-      'carCode': 'GDN-0011',
+      'toyName': 'Leaf Rake',
+      'toyCode': 'GDN-0011',
       'description': 'Leaf rake with 48-inch wooden handle',
       'price': 19.95,
       'categoryId': 1,
-      'supplierIds': [1, 2],
+      'supplierIds': [1, 2]
     },
     {
       'id': 2,
-      'carName': 'Car2',
-      'carCode': 'GDN-0023',
+      'toyName': 'Garden Cart',
+      'toyCode': 'GDN-0023',
       'description': '15 gallon capacity rolling garden cart',
       'price': 32.99,
       'categoryId': 1,
@@ -23,8 +23,8 @@ export class CarData {
     },
     {
       'id': 5,
-      'carName': 'Car3',
-      'carCode': 'TBX-0048',
+      'toyName': 'Hammer',
+      'toyCode': 'TBX-0048',
       'description': 'Curved claw steel hammer',
       'price': 8.9,
       'categoryId': 3,
@@ -32,8 +32,8 @@ export class CarData {
     },
     {
       'id': 8,
-      'carName': 'Car4',
-      'carCode': 'TBX-0022',
+      'toyName': 'Saw',
+      'toyCode': 'TBX-0022',
       'description': '15-inch steel blade hand saw',
       'price': 11.55,
       'categoryId': 3,
@@ -41,21 +41,12 @@ export class CarData {
     },
     {
       'id': 10,
-      'carName': 'Car6',
-      'carCode': 'GMG-0042',
+      'toyName': 'Video Game Controller',
+      'toyCode': 'GMG-0042',
       'description': 'Standard two-button video game controller',
       'price': 35.95,
       'categoryId': 5,
       'supplierIds': [9, 10]
-    },
-    {
-      'id': 11,
-      'carName': 'Car7',
-      'carCode': 'GDN-0011',
-      'description': 'Leaf rake with 48-inch wooden handle',
-      'price': 19.95,
-      'categoryId': 3,
-      'supplierIds': [1, 2, 3, 4]
-    },
+    }
   ];
 }

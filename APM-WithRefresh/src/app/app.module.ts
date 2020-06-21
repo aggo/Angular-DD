@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
-
 // Imports for loading & configuring the in-memory web api
 import { InMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { AppData } from './app-data';
@@ -17,7 +16,7 @@ import { PageNotFoundComponent } from './page-not-found.component';
   imports: [
     BrowserModule,
     HttpClientModule,
-    InMemoryWebApiModule.forRoot(AppData, { delay: 1000 }),
+    InMemoryWebApiModule.forRoot(AppData, {delay: 200}),
     AppRoutingModule
   ],
   declarations: [

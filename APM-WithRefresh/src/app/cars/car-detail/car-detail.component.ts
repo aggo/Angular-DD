@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { tap, catchError, map, filter } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 
 import { CarService } from '../car.service';
 import { Car } from '../car';
@@ -28,7 +28,8 @@ export class CarDetailComponent implements OnInit {
 
   constructor(private carService: CarService) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+  }
 
   displayCar(car: Car): void {
     // Display the appropriate heading
@@ -37,5 +38,9 @@ export class CarDetailComponent implements OnInit {
     } else {
       this.pageTitle = 'No car found';
     }
+  }
+
+  onSelectedSupplier(supplierId: number) {
+    this.carService.changeSelectedSupplier(supplierId);
   }
 }

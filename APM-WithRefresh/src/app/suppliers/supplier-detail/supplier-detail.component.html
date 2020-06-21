@@ -1,0 +1,25 @@
+<div class="card"
+     *ngIf="selectedSupplier$|async as selectedSupplier">
+  <div class="card-header">
+    Supplier details
+  </div>
+
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-2">Name:</div>
+      <div class="col-md-6">{{selectedSupplier.name}}</div>
+    </div>
+    <div class="row">
+      <div class="col-md-2">Min quantity:</div>
+      <div class="col-md-6">{{selectedSupplier.minQuantity}}</div>
+    </div>
+    <div class="row">
+      <div class="col-md-2">Extra details:</div>
+      <div class="col-md-6">{{selectedSupplier.extraDetails}}</div>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    This is the footer
+  </div>
+</div>

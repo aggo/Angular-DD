@@ -8,23 +8,23 @@
 
     <div class="row">
       <div class="col-md-2">Name:</div>
-      <div class="col-md-6">{{vm.ca-r.carName}}</div>
+      <div class="col-md-6">{{vm.toy.toyName}}</div>
     </div>
     <div class="row">
       <div class="col-md-2">Code:</div>
-      <div class="col-md-6">{{vm.car.carCode}}</div>
+      <div class="col-md-6">{{vm.toy.toyCode}}</div>
     </div>
     <div class="row">
       <div class="col-md-2">Description:</div>
-      <div class="col-md-6">{{vm.car.description}}</div>
+      <div class="col-md-6">{{vm.toy.description}}</div>
     </div>
     <div class="row">
       <div class="col-md-2">Price:</div>
-      <div class="col-md-6">{{vm.car.price|currency:"USD":"symbol"}}</div>
+      <div class="col-md-6">{{vm.toy.price|currency:"USD":"symbol"}}</div>
     </div>
     <div class="row">
       <div class="col-md-2">Category:</div>
-      <div class="col-md-6">{{vm.car.category}}</div>
+      <div class="col-md-6">{{vm.toy.category}}</div>
     </div>
 
     <div class="table-responsive">
@@ -38,7 +38,7 @@
           </tr>
         </thead>
         <tbody>
-        <tr class="pointer-on-hover" *ngFor="let supplier of vm.suppliers" (click)='onSelectedSupplier(supplier.id)'>
+          <tr *ngFor="let supplier of vm.suppliers">
             <td>{{ supplier.name }} </td>
             <td>{{ supplier.cost | currency:"USD":"symbol":"1.2-2" }}</td>
             <td>{{ supplier.minQuantity }}</td>

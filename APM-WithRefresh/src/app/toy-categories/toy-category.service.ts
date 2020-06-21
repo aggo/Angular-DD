@@ -1,29 +1,29 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject, throwError } from 'rxjs';
-import { catchError, mergeMap, tap } from 'rxjs/operators';
-import { CarCategory } from './car-category';
+import { catchError, mergeMap, take, tap } from 'rxjs/operators';
+import { ToyCategory } from './toy-category';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CarCategoryService {
-  private carCategoriesUrl = 'api/carCategories';
+export class ToyCategoryService {
+  private toyCategoriesUrl = 'api/toyCategories';
 
   // Getting started and refresh ... not a data stream so therefore use ReplaySubject to retain the values
   // "Reactive" way to control flow.
   // Not ever actually putting any data into it.
   private refresh = new ReplaySubject<void>();
 
-  // All car categories
+  // All toy categories
   // Refresh is used as a starter here.
   // [Object reference to a function]
   // HTTP: One and done eg. Autocomplete
   // Using refresh here instead of reassigning the value ensures that
   // no references are lost.
-  carCategories$: Observable<CarCategory[]> = this.refresh.pipe(
+  toyCategories$: Observable<ToyCategory[]> = this.refresh.pipe(
     /** any xxxMap will do, merge is the safest. */
-    mergeMap(() => this.http.get<CarCategory[]>(this.carCategoriesUrl)),
+    mergeMap(() => this.http.get<ToyCategory[]>(this.toyCategoriesUrl)),
     tap({
       next: data => console.log('getCategories', JSON.stringify(data)),
       complete: () => console.log('competed request!')

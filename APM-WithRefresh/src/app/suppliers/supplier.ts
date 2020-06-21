@@ -4,4 +4,5 @@ export interface Supplier {
   name: string;
   cost: number;
   minQuantity: number;
+  extraDetails?: string;
 }
