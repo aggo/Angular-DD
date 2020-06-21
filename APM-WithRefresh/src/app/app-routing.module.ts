@@ -12,12 +12,16 @@ import { PageNotFoundComponent } from './page-not-found.component';
         path: '',
         component: ShellComponent,
         children: [
-          { path: 'welcome', component: WelcomeComponent },
+          {path: 'welcome', component: WelcomeComponent},
           {
             path: 'products',
             loadChildren: './products/product.module#ProductModule'
           },
-          { path: '', redirectTo: 'welcome', pathMatch: 'full' }
+          {
+            path: 'cars',
+            loadChildren: './cars/car.module#CarModule'
+          },
+          {path: '', redirectTo: 'welcome', pathMatch: 'full'}
         ]
       },
       { path: '**', component: PageNotFoundComponent }

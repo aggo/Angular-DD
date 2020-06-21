@@ -1,0 +1,52 @@
+<div class="card">
+  <div class="card-header">
+    {{pageTitle}}
+  </div>
+
+  <div class='card-body'
+       *ngIf="cars$ | async as cars">
+    All cars
+    <div class='list-group'>
+      <button type='button'
+              class='list-group-item'
+              *ngFor='let car of cars'
+              [ngClass]="{'active': car?.id === (selectedCarId$ | async)}"
+              (click)='onSelected(car.id)'>
+        {{ car.carName }} ({{ car.category }})
+      </button>
+    </div>
+
+    <div class="row mt-4 mr-2 pull-right">
+      <button class="btn btn-outline-primary"
+              (click)='onRefresh()'>
+        Refresh Data
+      </button>
+    </div>
+  </div>
+
+  <div class='card-body'
+       *ngIf="vacationCars$ | async as vacationCars">
+    Vacation cars
+    <div class='list-group'>
+      <button type='button'
+              class='list-group-item'
+              *ngFor='let car of vacationCars'
+              [ngClass]="{'active': car?.id === (selectedCarId$ | async)}"
+              (click)='onSelected(car.id)'>
+        {{ car.carName }} ({{ car.category }})
+      </button>
+    </div>
+
+    <div class="row mt-4 mr-2 pull-right">
+      <button class="btn btn-outline-primary"
+              (click)='onRefresh()'>
+        Refresh Data
+      </button>
+    </div>
+  </div>
+
+</div>
+<div *ngIf='errorMessage'
+     class='alert alert-danger'>
+  Error: {{ errorMessage }}
+</div>
