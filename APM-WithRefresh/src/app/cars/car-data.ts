@@ -47,6 +47,15 @@ export class CarData {
       'price': 35.95,
       'categoryId': 5,
       'supplierIds': [9, 10]
-    }
+    },
+    {
+      'id': 11,
+      'carName': 'Car7',
+      'carCode': 'GDN-0011',
+      'description': 'Leaf rake with 48-inch wooden handle',
+      'price': 19.95,
+      'categoryId': 3,
+      'supplierIds': [1, 2, 3, 4]
+    },
   ];
 }

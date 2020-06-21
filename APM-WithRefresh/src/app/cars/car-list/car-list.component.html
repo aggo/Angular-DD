@@ -12,7 +12,7 @@
               *ngFor='let car of cars'
               [ngClass]="{'active': car?.id === (selectedCarId$ | async)}"
               (click)='onSelected(car.id)'>
-        {{ car.carName }} ({{ car.category }})
+        {{ car.carName }} ({{ car.category }} TOTAL {{car.totalInThisCategory}})
       </button>
     </div>
 

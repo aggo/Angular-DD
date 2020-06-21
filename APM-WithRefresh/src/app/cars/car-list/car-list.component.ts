@@ -12,14 +12,14 @@ import { CarService } from '../car.service';
 export class CarListComponent implements OnInit {
   pageTitle = 'Cars';
   errorMessage: string;
-  cars$ = this.carService.carsWithCategory$.pipe(
+  cars$ = this.carService.carsWithCategoryAndTotal$.pipe(
     catchError(error => {
       this.errorMessage = error;
       return of(null);
     })
   );
 
-  vacationCars$ = this.carService.carsWithCategory$.pipe(
+  vacationCars$ = this.carService.carsWithCategoryAndTotal$.pipe(
     // transform the array into an array where we only keep vacation cars
     map(cars => cars.filter(car => car.category === 'Vacation')),
     catchError(error => {

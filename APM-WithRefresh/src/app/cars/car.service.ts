@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { combineLatest, Observable, ReplaySubject, throwError } from 'rxjs';
-import { catchError, concatAll, filter, map, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { catchError, filter, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 
 import { Car } from './car';
 import { CarCategoryService } from '../car-categories/car-category.service';
@@ -52,31 +52,32 @@ export class CarService {
 
   // All cars with category id mapped to category name
   // Be sure to specify the type to ensure after the map that it knows the correct type
-  carsWithCategory$ = combineLatest(
+  carsWithCategoryAndTotal$ = combineLatest(
     this.cars$,
     this.carCategoryService.carCategories$
   ).pipe(
     map(([cars, categories]) =>
       cars
         .map(
-          p =>
+          currentCar =>
             ({
-              ...p,
-              category: categories.find(c => p.categoryId === c.id).name
+              ...currentCar,
+              category: categories.find(c => currentCar.categoryId === c.id).name,
+              totalInThisCategory: cars.filter(c => c.categoryId === currentCar.categoryId).length
             } as Car) // <-- note the type here
         )
-        // .filter(car => car.category === 'Vacation')
+// .filter(car => car.category === 'Vacation')
     ),
     shareReplay()
   );
 
-  // Currently selected car
-  // Subscribed to in both List and Detail pages,
-  // so use the shareReply to share it with any component that uses it
-  // Location of the shareReplay matters ... won't share anything *after* the shareReplay
+// Currently selected car
+// Subscribed to in both List and Detail pages,
+// so use the shareReply to share it with any component that uses it
+// Location of the shareReplay matters ... won't share anything *after* the shareReplay
   selectedCar$ = combineLatest(
     this.selectedCarChanges$,
-    this.carsWithCategory$
+    this.carsWithCategoryAndTotal$
   ).pipe(
     map(([selectedCarId, cars]) =>
       cars.find(car => car.id === selectedCarId)

@@ -15,4 +15,5 @@ export interface Car {
   price: number;
   supplierIds?: number[];
   suppliers?: Supplier[];
+  totalInThisCategory: number;
 }
