@@ -4,10 +4,10 @@ import { TestScheduler } from 'rxjs/testing';
 import * as assert from 'assert';
 import { HttpClientModule } from '@angular/common/http';
 import { rxSandbox } from 'rx-sandbox';
-import { merge } from 'rxjs';
+import { concat, merge } from 'rxjs';
 import { expect } from 'chai';
 import { marbleAssert } from 'rx-sandbox/dist/src/assert/marbleAssert';
-import { mapTo } from 'rxjs/operators';
+import { filter, map, mapTo, switchMap } from 'rxjs/operators';
 import { CarCategoryData } from './car-category-data';
 
 
@@ -29,11 +29,11 @@ describe('CarCategoryService ', () => {
 
     rx = rxSandbox.create();
     const {cold, hot} = rx;
-    httpService = jasmine.createSpyObj('HttpClient', [
-      'get'
+    httpService = jasmine.createSpyObj('MyHttpService', [
+      'getCategories'
     ]);
 
-    httpService.get.and.returnValue(
+    httpService.getCategories.and.returnValue(
       cold('---a---b', {a: testData[0], b: testData[1]})
     );
 
@@ -60,87 +60,75 @@ describe('CarCategoryService ', () => {
     marbleAssert(messages).to.equal(expectedObservable);
   });
 
-  //
-  // it('should test car categories', () => {
-  //   const service: CarCategoryService = TestBed.get(CarCategoryService);
-  //
-  //   testScheduler.run(({hot, cold, expectObservable}) => {
-  //     const action$ = hot('-a-a', {
-  //       a: {type: 'FETCH_USER', id: '123'}
-  //     });
-  //     const dependencies = {
-  //       getJSON: url => cold('--a', {
-  //         a: {url}
-  //       })
-  //     };
-  //
-  //     const output$ = service.carCategories$;
-  //
-  //     service.refreshData();
-  //
-  //     const subs = output$.subscribe((result) => {
-  //       console.log(result);
-  //     }, (err) => {
-  //       console.log(err);
-  //     });
-  //     subs.unsubscribe();
-  //
-  //     // expectObservable(output$).toBe('1');
-  //   });
-  // });
-  xit('testcase', () => {
+  it('test merge', () => {
     const {hot, cold, flush, getMessages, e, s} = rxSandbox.create();
-    const e1 = hot('  --^--a--b--|');
+    const e1 = hot('    ---a--b--|');
     const e2 = cold('   ---x--y--|', {x: 1, y: 2});
 
-    const expected = e('       ---q--r--|');
-    const sub = s('       ^        !');
+    const expected = e('---(ax)--(by)--|', {x: 1, y: 2});
 
     const messages = getMessages(merge(e1, e2));
 
     flush();
 
-    //assertion
-
     marbleAssert(messages).to.equal(expected);
-    expect(e1.subscriptions).to.deep.equal(sub);
   });
 
-  xit('testcase', () => {
+  it('test concat', () => {
     const {hot, cold, flush, getMessages, e, s} = rxSandbox.create();
-    const e1 = hot('    --^--a--b--|');
+    const e1 = hot('    ---a--b--|');
     const e2 = cold('   ---x--y--|', {x: 1, y: 2});
 
-    const expected = e('       ---q--r--|');
-    const sub = s('       ^        !');
+    const expected = e('---a--b-----x--y--|', {x: 1, y: 2}); // they arrive in order
 
-    const messages = getMessages(merge(e1, e2));
+    const messages = getMessages(concat(e1, e2));
 
     flush();
 
-    //assertion
-
     marbleAssert(messages).to.equal(expected);
-    expect(e1.subscriptions).to.deep.equal(sub);
   });
 
-  it('testcase2', () => {
+  it('test filter', () => {
     const {hot, cold, flush, getMessages, e, s} = rxSandbox.create();
+    const e1 = hot('    ---a--b--|');
+    const e2 = cold('   ---x--y--|', {x: 1, y: 2});
 
-    const e1 = hot('    --a--b--c|');
-    const expected = e('--x--x--x|');
-    const subs = s(`    ^       !`);
-    const messages = getMessages(e1.pipe(mapTo('x')));
+    const expected = e('------y--|', {y: 2}); // they arrive in order
 
-    console.log(messages);
-    expect(messages).to.be.empty;
+    const messages = getMessages(e2.pipe(filter(v => v > 1)));
 
     flush();
 
-    //now values are available
     marbleAssert(messages).to.equal(expected);
-    //subscriptions are also available too
-    // expect(e1.subscriptions).to.deep.equal(subs);
+  });
+
+  it('test map', () => {
+    const {hot, cold, flush, getMessages, e, s} = rxSandbox.create();
+    const e1 = hot('    ---a--b--|', {a: 1, b: 2});
+    const e2 = cold('   ---x--y--|', {x: 3, y: 4});
+
+    const expected = e('---a--b-----x--y--|', {a: 10, b: 20, x: 30, y: 40}); // they arrive in order
+
+    const messages = getMessages(concat(e1, e2).pipe(map(v => v * 10)));
+
+    flush();
+
+    marbleAssert(messages).to.equal(expected);
+  });
+
+  // todo
+  xit('test switchmap', () => {
+    const {hot, cold, flush, getMessages, e, s} = rxSandbox.create();
+    const e1 = hot('    ---a--b--|');
+    const e2 = cold('   ---x--y--|', {x: 1, y: 2});
+
+    const expected = e('---------1--2--|', {x: 1, y: 2});
+
+    const messages = getMessages(e1.pipe(switchMap((value) => e2)));
+
+    flush();
+
+    marbleAssert(messages).to.equal(expected);
   });
 
   it('service test', () => {
@@ -156,9 +144,9 @@ describe('CarCategoryService ', () => {
 
     flush();
 
-    //now values are available
+    // now values are available
     marbleAssert(messages).to.equal(expected);
-    //subscriptions are also available too
+    // subscriptions are also available too
     // expect(e1.subscriptions).to.deep.equal(subs);
   });
 

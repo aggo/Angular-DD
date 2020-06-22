@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject, throwError } from 'rxjs';
 import { catchError, mergeMap, tap } from 'rxjs/operators';
@@ -24,16 +23,15 @@ export class CarCategoryService {
   // no references are lost.
   carCategories$: Observable<CarCategory[]> = this.refresh.pipe(
     /** any xxxMap will do, merge is the safest. */
-    mergeMap(() => this.http.get<CarCategory[]>(this.carCategoriesUrl)),
+    mergeMap(() => this.myHttpService.getCategories()),
     tap({
       next: data => console.log('getCategories', JSON.stringify(data)),
       complete: () => console.log('competed request!')
     }),
-
     catchError((this.handleError))
   );
 
-  constructor(private http: HttpClient) {
+  constructor(private myHttpService: MyHttpService) {
   }
 
   // Refresh the data.

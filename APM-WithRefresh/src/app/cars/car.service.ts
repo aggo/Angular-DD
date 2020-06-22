@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 
 import { combineLatest, Observable, ReplaySubject, throwError } from 'rxjs';
 import { catchError, filter, map, shareReplay, switchMap, tap } from 'rxjs/operators';
@@ -8,6 +7,7 @@ import { Car } from './car';
 import { CarCategoryService } from '../car-categories/car-category.service';
 import { SupplierService } from '../suppliers/supplier.service';
 import { Supplier } from '../suppliers/supplier';
+import { MyHttpService } from '../car-categories/my-http.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,7 @@ import { Supplier } from '../suppliers/supplier';
 export class CarService {
 
   constructor(
-    private http: HttpClient,
+    private myHttpService: MyHttpService,
     private carCategoryService: CarCategoryService,
     private supplierService: SupplierService
   ) {
@@ -42,9 +42,9 @@ export class CarService {
   // set the observable directly
   // Use shareReplay to "replay" the data from the observable
   // Subscription remains even if there are no subscribers (navigating to the Welcome page for example)
-  cars$ = this.http.get<Car[]>(this.carsUrl)
+  cars$ = this.myHttpService.getCars()
     .pipe(
-      tap(data => console.log('getCategories: ', JSON.stringify(data))),
+      tap(data => console.log('getCars: ', JSON.stringify(data))),
       shareReplay(),
       catchError(this.handleError)
     );
@@ -61,22 +61,24 @@ export class CarService {
 
   // All cars with category id mapped to category name
   // Be sure to specify the type to ensure after the map that it knows the correct type
-  carsWithCategoryAndTotal$ = combineLatest(
+  carsWithCategoryAndTotal$: Observable<Car[]> = combineLatest(
     this.cars$,
     this.carCategoryService.carCategories$
   ).pipe(
-    map(([cars, categories]) =>
-      cars
+    map(([cars, categories]) => {
+      console.log('***', cars);
+      console.log('^^^categories', categories);
+      return cars
         .map(
-          currentCar =>
-            ({
+          currentCar => {
+            return ({
               ...currentCar,
               category: categories.find(c => currentCar.categoryId === c.id).name,
               totalInThisCategory: cars.filter(c => c.categoryId === currentCar.categoryId).length
-            } as Car) // <-- note the type here
-        )
-// .filter(car => car.category === 'Vacation')
-    ),
+            } as Car);
+          }// <-- note the type here
+        );
+    }),
     shareReplay()
   );
 
@@ -119,6 +121,7 @@ export class CarService {
   ).pipe(
     map(([selectedSupplierId, suppliers]) =>
       suppliers.find(supplier => supplier.id === selectedSupplierId) as Supplier
+
     ),
     tap(s => console.log('changeSelectedSupplier', s)),
     shareReplay({bufferSize: 1, refCount: false})
