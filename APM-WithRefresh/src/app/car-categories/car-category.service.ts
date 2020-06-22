@@ -24,7 +24,7 @@ export class CarCategoryService {
   // no references are lost.
   carCategories$: Observable<CarCategory[]> = this.refresh.pipe(
     /** any xxxMap will do, merge is the safest. */
-    mergeMap(() => this.httpService.getCategories()),
+    mergeMap(() => this.http.get<CarCategory[]>(this.carCategoriesUrl)),
     tap({
       next: data => console.log('getCategories', JSON.stringify(data)),
       complete: () => console.log('competed request!')
@@ -33,8 +33,7 @@ export class CarCategoryService {
     catchError((this.handleError))
   );
 
-  constructor(private http: HttpClient,
-              private httpService: MyHttpService) {
+  constructor(private http: HttpClient) {
   }
 
   // Refresh the data.

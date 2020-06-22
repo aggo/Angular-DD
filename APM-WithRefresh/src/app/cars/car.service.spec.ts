@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-import { CarCategoryService } from './car-category.service';
 import { TestScheduler } from 'rxjs/testing';
 import * as assert from 'assert';
 import { HttpClientModule } from '@angular/common/http';
@@ -8,16 +7,21 @@ import { merge } from 'rxjs';
 import { expect } from 'chai';
 import { marbleAssert } from 'rx-sandbox/dist/src/assert/marbleAssert';
 import { mapTo } from 'rxjs/operators';
-import { CarCategoryData } from './car-category-data';
+import { CarService } from './car.service';
+import { CarCategoryService } from '../car-categories/car-category.service';
+import { CarData } from './car-data';
+import { CarCategoryData } from '../car-categories/car-category-data';
 
 
-describe('CarCategoryService ', () => {
+describe('CarService ', () => {
   beforeEach(() => TestBed.configureTestingModule({imports: [HttpClientModule]}));
   let testScheduler: TestScheduler;
   let rx: any;
   let httpService: any;
+  let carService: CarService;
   let carCategoryService: CarCategoryService;
-  let testData: any;
+  let testCars: any;
+  let testCategories: any;
 
   beforeEach(() => {
     testScheduler = new TestScheduler((actual, expected) => {
@@ -25,7 +29,8 @@ describe('CarCategoryService ', () => {
       assert.deepEqual(actual, expected);
     });
 
-    testData = CarCategoryData.categories;
+    testCars = CarData.cars;
+    testCategories = CarCategoryData.categories;
 
     rx = rxSandbox.create();
     const {cold, hot} = rx;
@@ -34,7 +39,7 @@ describe('CarCategoryService ', () => {
     ]);
 
     httpService.get.and.returnValue(
-      cold('---a---b', {a: testData[0], b: testData[1]})
+      cold('---a---b', {a: testCategories[0], b: testCategories[1]})
     );
 
     carCategoryService = new CarCategoryService(httpService);
