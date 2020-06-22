@@ -3,10 +3,12 @@
     {{pageTitle}}
   </div>
 
-  <div class='card-body'>
+  <div class='card-body' *ngIf="toys$|async as toys">
     <div class='list-group'>
       <button type='button'
+              *ngFor="let toy of toys"
               class='list-group-item'>
+        {{toy.toyName}}
       </button>
     </div>
 

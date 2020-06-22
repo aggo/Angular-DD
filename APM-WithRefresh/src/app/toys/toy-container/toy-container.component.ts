@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
-import { ToyService } from '../toy.service';
+import { ToyCategoryService } from '../../toy-categories/toy-category.service';
 
 @Component({
   templateUrl: './toy-container.component.html'
@@ -8,9 +7,10 @@ import { ToyService } from '../toy.service';
 export class ToyContainerComponent implements OnInit {
   pageTitle = 'Toys';
 
-  constructor() {
+  constructor(private toyCategoryService: ToyCategoryService) {
   }
 
   ngOnInit(): void {
+    this.toyCategoryService.start();
   }
 }

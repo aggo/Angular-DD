@@ -44,7 +44,7 @@ export class CarService {
   // Subscription remains even if there are no subscribers (navigating to the Welcome page for example)
   cars$ = this.http.get<Car[]>(this.carsUrl)
     .pipe(
-      tap(data => console.log('getCars: ', JSON.stringify(data))),
+      tap(data => console.log('getCategories: ', JSON.stringify(data))),
       shareReplay(),
       catchError(this.handleError)
     );
@@ -54,7 +54,7 @@ export class CarService {
   // Must then `mergeMap` to flatten the inner observable.
   // cars$ = this.refresh.pipe(
   //   mergeMap(() => this.http.get<Car[]>(this.carsUrl)),
-  //   tap(data => console.log('getCars: ', JSON.stringify(data))),
+  //   tap(data => console.log('getCategories: ', JSON.stringify(data))),
   //   shareReplay(),
   //   catchError(this.handleError)
   // );

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ToyService } from '../toy.service';
 
 @Component({
   selector: 'pm-toy-list',
@@ -8,10 +9,14 @@ export class ToyListComponent implements OnInit {
   pageTitle = 'Toys';
   errorMessage: string;
 
-  constructor(
-  ) {}
+  toys$ = this.toyService.toysWithObs$;
+
+  constructor(private toyService: ToyService
+  ) {
+  }
 
   ngOnInit(): void {
+    this.toyService.refresh();
   }
 
 }

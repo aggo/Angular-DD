@@ -1,0 +1,5 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="karma.conf.js" type="NodeJSConfigurationType" singleton="false" nameIsGenerated="true" path-to-js-file="karma.conf.js" working-dir="$PROJECT_DIR$/src">
+    <method v="2" />
+  </configuration>
+</component>
