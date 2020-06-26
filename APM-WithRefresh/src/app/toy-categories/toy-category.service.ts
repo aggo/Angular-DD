@@ -1,14 +1,13 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject, throwError } from 'rxjs';
 import { catchError, mergeMap, tap } from 'rxjs/operators';
 import { ToyCategory } from './toy-category';
+import { MyHttpService } from '../car-categories/my-http.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ToyCategoryService {
-  private toyCategoriesUrl = 'api/toyCategories';
 
   // Getting started and refresh ... not a data stream so therefore use ReplaySubject to retain the values
   // "Reactive" way to control flow.
@@ -23,7 +22,7 @@ export class ToyCategoryService {
   // no references are lost.
   toyCategories$: Observable<ToyCategory[]> = this.refresh.pipe(
     /** any xxxMap will do, merge is the safest. */
-    mergeMap(() => this.http.get<ToyCategory[]>(this.toyCategoriesUrl)),
+    mergeMap(() => this.myHttpService.getToyCategories()),
     tap({
       next: data => {
         // console.log('getCategories', JSON.stringify(data));
@@ -33,7 +32,8 @@ export class ToyCategoryService {
     catchError((this.handleError))
   );
 
-  constructor(private http: HttpClient) { }
+  constructor(private myHttpService: MyHttpService) {
+  }
 
   // Refresh the data.
   refreshData(): void {

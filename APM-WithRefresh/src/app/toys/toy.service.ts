@@ -1,39 +1,42 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { ToyCategoryService } from '../toy-categories/toy-category.service';
 import { SupplierService } from '../suppliers/supplier.service';
-import { mergeMap, shareReplay, tap } from 'rxjs/operators';
+import { map, mergeMap, shareReplay, tap } from 'rxjs/operators';
 import { Toy } from './toy';
-import { Observable, ReplaySubject } from 'rxjs';
+import { combineLatest, Observable, ReplaySubject } from 'rxjs';
+import { MyHttpService } from '../car-categories/my-http.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ToyService {
-  private toysUrl = 'api/toys';
 
   private refresh$ = new ReplaySubject<boolean>();
-  private refreshObs = new Observable(observer => {
-    observer.next();
-  });
 
   toys$ = this.refresh$.pipe(
-    mergeMap(() => this.http.get<Toy[]>(this.toysUrl)),
+    mergeMap(() => this.myHttpService.getToys()),
     tap(() => console.log('Loaded toys!')),
     // takeUntil(fromEvent(document.getElementById('id1'), 'click')),
     shareReplay()
   );
 
-  toysWithObs$ = this.refreshObs.pipe(
-    mergeMap(() => this.http.get<Toy[]>(this.toysUrl)),
-    tap(() => console.log('Loaded toys!')),
-    // takeUntil(fromEvent(document.getElementById('id1'), 'click')),
-    shareReplay()
-  );
+
+  toysWithCategories$ = combineLatest(
+    this.toys$,
+    this.toyCategoryService.toyCategories$)
+    .pipe(map(([toys, categories]) => {
+      return toys
+        .map(currentToy => {
+          return ({
+            ...currentToy,
+            category: categories.find(c => c.id === currentToy.categoryId).name
+          } as Toy);
+        });
+    }));
 
 
   constructor(
-    private http: HttpClient,
+    private myHttpService: MyHttpService,
     private toyCategoryService: ToyCategoryService,
     private supplierService: SupplierService,
   ) {
@@ -41,9 +44,6 @@ export class ToyService {
 
   refresh() {
     this.refresh$.next(true);
-    this.refreshObs.subscribe(() => {
-      console.log('si de aici');
-    });
   }
 
 }

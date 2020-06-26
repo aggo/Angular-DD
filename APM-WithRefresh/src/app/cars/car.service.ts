@@ -21,21 +21,20 @@ export class CarService {
   ) {
   }
 
-  private carsUrl = 'api/cars';
-
   // Use ReplaySubject to "replay" values to new subscribers
   // It buffers the defined number of values, in these cases, 1.
 
   // Invalidates the cache and refreshes the data from the backend server
   // The generic parameter is void because it does not care what the value is, only that an item is emitted.
   private refresh = new ReplaySubject<void>(1);
+
   // Retains the currently selected car Id
   // Uses 0 for no selected car (couldn't use null because it is used as a route parameter)
   private selectedCarSource = new ReplaySubject<number>(1);
   // Expose the selectedCar as an observable for use by any components
   selectedCarChanges$ = this.selectedCarSource.asObservable();
 
-  // LIST OF STREAMS
+  // ------------------------ LIST OF STREAMS
 
   // All cars
   // Instead of defining the http.get in a method in the service,
@@ -69,8 +68,6 @@ export class CarService {
     this.carCategoryService.carCategories$
   ).pipe(
     map(([cars, categories]) => {
-      // console.log('***', cars);
-      // console.log('^^^categories', categories);
       return cars
         .map(
           currentCar => {
@@ -78,17 +75,17 @@ export class CarService {
               ...currentCar,
               category: categories.find(c => currentCar.categoryId === c.id).name,
               totalInThisCategory: cars.filter(c => c.categoryId === currentCar.categoryId).length
-            } as Car);
-          }// <-- note the type here
+            } as Car); // <-- note the type here
+          }
         );
     }),
     shareReplay()
   );
 
-// Currently selected car
-// Subscribed to in both List and Detail pages,
-// so use the shareReply to share it with any component that uses it
-// Location of the shareReplay matters ... won't share anything *after* the shareReplay
+  // Currently selected car
+  // Subscribed to in both List and Detail pages,
+  // so use the shareReply to share it with any component that uses it
+  // Location of the shareReplay matters ... won't share anything *after* the shareReplay
   selectedCar$ = combineLatest(
     this.selectedCarChanges$,
     this.carsWithCategoryAndTotal$
@@ -124,18 +121,15 @@ export class CarService {
   ).pipe(
     map(([selectedSupplierId, suppliers]) =>
       suppliers.find(supplier => supplier.id === selectedSupplierId) as Supplier
-
     ),
     tap(s => console.log('changeSelectedSupplier', s)),
     shareReplay({bufferSize: 1, refCount: false})
   );
 
-  // Change the selected car
   changeSelectedCar(selectedCarId: number | null): void {
     this.selectedCarSource.next(selectedCarId);
   }
 
-  // Change the selected supplier
   changeSelectedSupplier(selectedSupplierId: number | null): void {
     this.selectedSupplierSource.next(selectedSupplierId);
   }
@@ -191,7 +185,7 @@ export class CarService {
     } else {
       // The backend returned an unsuccessful response code.
       // The response body may contain clues as to what went wrong,
-      errorMessage = `Backend returned code ${err.status}: ${err.body.error}`;
+      errorMessage = `Backend returned code ${err.status}: ${err}`;
     }
     console.error(err);
     return throwError(errorMessage);

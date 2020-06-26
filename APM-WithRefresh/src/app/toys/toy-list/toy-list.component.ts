@@ -9,7 +9,8 @@ export class ToyListComponent implements OnInit {
   pageTitle = 'Toys';
   errorMessage: string;
 
-  toys$ = this.toyService.toysWithObs$;
+  toys$ = this.toyService.toys$;
+  toysWithCategories$ = this.toyService.toysWithCategories$;
 
   constructor(private toyService: ToyService
   ) {

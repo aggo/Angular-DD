@@ -4,7 +4,7 @@ import { TestScheduler } from 'rxjs/testing';
 import * as assert from 'assert';
 import { HttpClientModule } from '@angular/common/http';
 import { rxSandbox } from 'rx-sandbox';
-import { combineLatest, concat, merge, of } from 'rxjs';
+import { combineLatest, concat, forkJoin, merge, of } from 'rxjs';
 import { marbleAssert } from 'rx-sandbox/dist/src/assert/marbleAssert';
 import { catchError, concatMap, filter, map, mergeMap, startWith, switchMap, withLatestFrom } from 'rxjs/operators';
 import { CarCategoryData } from './car-category-data';
@@ -158,7 +158,7 @@ describe('CarCategoryService ', () => {
   });
 
   it('test concatMap without complete', () => {
-    const {hot, cold, flush, getMessages, e, s, advanceTo} = rxSandbox.create();
+    const {hot, cold, flush, getMessages, e} = rxSandbox.create();
     const e1 = hot('ab|', {a: 0, b: 1});
     const e2 = cold('---c|');
     const e3 = cold('---d|');
@@ -278,6 +278,24 @@ describe('CarCategoryService ', () => {
     marbleAssert(messages).to.equal(expected);
   });
 
+  it('test forkJoin', () => {
+    const {hot, cold, flush, getMessages, e} = rxSandbox.create();
+
+    const e1 = cold('-a---b--|', {a: 1, b: 2});
+    const e2 = cold('---c--d-|', {c: 10, d: 20});
+
+    const result = forkJoin([e1, e2]);
+
+    const expected = e('--------(a|)', {a: [2, 20]});
+
+    const messages = getMessages<number[]>(result);
+
+    flush();
+
+    marbleAssert(messages).to.equal(expected);
+  });
+
+
   it('test combineLatest with error and no mapping', () => {
     const {hot, flush, getMessages, e} = rxSandbox.create();
 
@@ -322,7 +340,6 @@ describe('CarCategoryService ', () => {
       page.pipe(startWith('page0')),
       flt.pipe(startWith(''))])
       .pipe(map(p => {
-        console.log('2222 ', p);
         return p;
       }));
 
@@ -364,7 +381,7 @@ describe('CarCategoryService ', () => {
     marbleAssert(messages).to.equal(expected);
   });
 
-  it('test hot and cold with interval', () => {
+  it('test hot and cold with merge', () => {
     const {hot, cold, flush, getMessages, e} = rxSandbox.create();
 
     const page = hot('abcdef|');

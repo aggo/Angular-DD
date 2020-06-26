@@ -8,7 +8,6 @@ import { MyHttpService } from './my-http.service';
   providedIn: 'root'
 })
 export class CarCategoryService {
-  private carCategoriesUrl = 'api/carCategories';
 
   // Getting started and refresh ... not a data stream so therefore use ReplaySubject to retain the values
   // "Reactive" way to control flow.
