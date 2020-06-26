@@ -44,7 +44,10 @@ export class CarService {
   // Subscription remains even if there are no subscribers (navigating to the Welcome page for example)
   cars$ = this.myHttpService.getCars()
     .pipe(
-      tap(data => console.log('getCars: ', JSON.stringify(data))),
+      tap(data => {
+          // /*console.log('getCars: ', JSON.stringify(data))*/
+        }
+      ),
       shareReplay(),
       catchError(this.handleError)
     );
@@ -66,8 +69,8 @@ export class CarService {
     this.carCategoryService.carCategories$
   ).pipe(
     map(([cars, categories]) => {
-      console.log('***', cars);
-      console.log('^^^categories', categories);
+      // console.log('***', cars);
+      // console.log('^^^categories', categories);
       return cars
         .map(
           currentCar => {

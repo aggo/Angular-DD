@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject, throwError } from 'rxjs';
-import { catchError, mergeMap, take, tap } from 'rxjs/operators';
+import { catchError, mergeMap, tap } from 'rxjs/operators';
 import { ToyCategory } from './toy-category';
 
 @Injectable({
@@ -25,7 +25,9 @@ export class ToyCategoryService {
     /** any xxxMap will do, merge is the safest. */
     mergeMap(() => this.http.get<ToyCategory[]>(this.toyCategoriesUrl)),
     tap({
-      next: data => console.log('getCategories', JSON.stringify(data)),
+      next: data => {
+        // console.log('getCategories', JSON.stringify(data));
+      },
       complete: () => console.log('competed request!')
     }),
     catchError((this.handleError))
