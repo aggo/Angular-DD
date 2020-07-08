@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 
 import { combineLatest, Observable, ReplaySubject, throwError } from 'rxjs';
-import { catchError, filter, map, shareReplay, switchMap, tap } from 'rxjs/operators';
-
+import { catchError, filter, find, map, shareReplay, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { fromEvent } from 'rxjs';
 import { Car } from './car';
 import { CarCategoryService } from '../car-categories/car-category.service';
 import { SupplierService } from '../suppliers/supplier.service';
@@ -94,7 +94,7 @@ export class CarService {
       cars.find(car => car.id === selectedCarId)
     ),
     tap(car => console.log('changeSelectedCar', car)),
-    shareReplay({bufferSize: 1, refCount: false})
+    shareReplay({bufferSize: 10, refCount: false})
   );
 
   // filter(Boolean) checks for nulls, which casts anything it gets to a Boolean.
@@ -189,5 +189,11 @@ export class CarService {
     }
     console.error(err);
     return throwError(errorMessage);
+  }
+
+  isNameExists(value: any) {
+    return this.selectedCar$.pipe(
+      withLatestFrom(this.selectedCar$),
+      find(cars => !!cars.find(car => car.carName === value)));
   }
 }

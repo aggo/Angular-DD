@@ -11,13 +11,19 @@ import { ShellComponent } from './home/shell.component';
 import { MenuComponent } from './home/menu.component';
 import { WelcomeComponent } from './home/welcome.component';
 import { PageNotFoundComponent } from './page-not-found.component';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MaterialModule } from './suppliers/supplier-detail/material.module';
 
 @NgModule({
   imports: [
     BrowserModule,
     HttpClientModule,
     InMemoryWebApiModule.forRoot(AppData, {delay: 200}),
-    AppRoutingModule
+    AppRoutingModule,
+    NoopAnimationsModule,
+    ReactiveFormsModule,
+    MaterialModule
   ],
   declarations: [
     AppComponent,

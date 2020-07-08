@@ -4,9 +4,9 @@ import { TestScheduler } from 'rxjs/testing';
 import * as assert from 'assert';
 import { HttpClientModule } from '@angular/common/http';
 import { rxSandbox } from 'rx-sandbox';
-import { combineLatest, concat, forkJoin, merge, of } from 'rxjs';
+import { combineLatest, concat, EMPTY, forkJoin, merge, NEVER, of, throwError } from 'rxjs';
 import { marbleAssert } from 'rx-sandbox/dist/src/assert/marbleAssert';
-import { catchError, concatMap, filter, map, mergeMap, startWith, switchMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, concatMap, filter, map, mergeMap, shareReplay, startWith, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { CarCategoryData } from './car-category-data';
 
 
@@ -397,4 +397,243 @@ describe('CarCategoryService ', () => {
 
     marbleAssert(messages).to.equal(expected);
   });
+
+
+  it('test with permissions', () => {
+    const {hot, cold, flush, getMessages, e} = rxSandbox.create();
+
+    function handleError(err) {
+      // in a real world app, we may send the server to some remote logging infrastructure
+      // instead of just logging it to the console
+      let errorMessage: string;
+      if (err.error instanceof ErrorEvent) {
+        // A client-side or network error occurred. Handle it accordingly.
+        errorMessage = `An error occurred: ${err.error.message}`;
+      } else {
+        // The backend returned an unsuccessful response code.
+        // The response body may contain clues as to what went wrong,
+        errorMessage = `Backend returned code ${err.status}: ${err}`;
+      }
+      console.error(err);
+      return throwError(errorMessage);
+    }
+
+    const saveSuccessToPage$ = hot(' --a----b-----|', {a: true}).pipe(map(() => 1));
+    const pageFromPagination$ = hot('----c---d---|', {c: 2, d: 3});
+    const httpPermission$ = cold('    a|', {a: true});
+
+    const page$ = merge(saveSuccessToPage$, pageFromPagination$);
+
+    const usersWithPermission = combineLatest(page$, httpPermission$)
+      .pipe(
+        switchMap(([page, permission]) => {
+          if (permission) {
+            return cold('u|', {u: {searchedPage: page}});
+          } else {
+            return cold('x|', {x: {'status': 404}});
+          }
+        }),
+        catchError(handleError));
+
+
+    const expected = e('--u-v--wy----|', {
+      u: {searchedPage: 1},
+      v: {searchedPage: 2},
+      w: {searchedPage: 1},
+      y: {searchedPage: 3}
+    });
+
+    const httpPermission2$ = cold('    b|', {b: false});
+    const usersWithoutPermission = combineLatest(page$, httpPermission2$)
+      .pipe(
+        switchMap(([page, permission]) => {
+          if (permission) {
+            return cold('u|', {u: {searchedPage: page}});
+          } else {
+            return EMPTY;
+          }
+        }));
+
+    const expected2 = e('--u-v--wy----|', {
+      u: {status: 404},
+      v: {status: 404},
+      w: {status: 404},
+      y: {status: 404}
+    });
+    // const hasPermission$ = page$.pipe(mergeMap((page) => {
+    //   return {page: page, obs: httpPermission$};
+    // }));
+    //
+    // const users$ = hasPermission$.pipe(map((perm) => {
+    //   if (perm) {
+    //     return cold('u|', {u: {searchedPage: page, usedFilter: ''}});
+    //   } else {
+    //     return cold('x|', {x: {'status': 404}});
+    //   }
+    // }));
+    //
+    // const usersWithPermission2 =
+    //   page$
+    //     .pipe(
+    //       mergeMap((page) => httpPermission$),
+    //       map((permission, page) => {
+    //         if (permission) {
+    //           return cold('u|', {u: {searchedPage: page, usedFilter: ''}});
+    //         } else {
+    //           return cold('x|', {x: {'status': 404}});
+    //         }
+    //       }),
+    //       catchError(handleError));
+    //
+
+    // const userList1$ =
+    //   combineLatest(
+    //     page$,
+    //     filter$.pipe(map(() => withLatestFrom()))
+    //   ).pipe(
+    //     switchMap(([page, flt]) => {
+    //         console.log('Page is', page);
+    //         console.log('Filter  is', flt);
+    //         return cold('u|', {u: {searchedPage: page, usedFilter: flt}});
+    //       }
+    //     ),
+    //     tap(page => console.log('Fetched the users:', page)),
+    //     shareReplay(1)
+    //   );
+
+    //   const userList3$ =
+    //     filter$.pipe(
+    //       switchMap((flt) => {
+    //           console.log('Page is', 1);
+    //           console.log('Filter  is', flt);
+    //           return cold('u|', {u: {searchedPage: 1, usedFilter: flt}});
+    //         }
+    //       ),
+    //     );
+    //
+    //   const final$ =
+    //     merge(
+    //       userList1$,
+    //       userList3$
+    //     ).pipe(tap(users)
+    // =>
+    //   {
+    //     console.log(users);
+    //   }
+    // )
+    //   ;
+    // const userList2$ =
+    //   page$.pipe(
+    //     withLatestFrom(filter$),
+    //     switchMap(([page, flt]) => {
+    //         console.log('Page is', page);
+    //         console.log('Filter  is', flt);
+    //         return cold('u|', {u: {searchedPage: page, usedFilter: flt}});
+    //       }
+    //     ),
+    //     tap(page => console.log('Fetched the users:', page)),
+    //     shareReplay(1)
+    //   );
+
+    const messages = getMessages(usersWithPermission);
+    const messages2 = getMessages(usersWithoutPermission);
+    // const messages2 = getMessages(userList$);
+    //
+    // hot('--a--b--|', {a: true}).pipe(
+    //   mergeMap(() => hot('---c--d-|', {c: 1}))
+    // );
+
+    flush();
+    console.log('usersMessages:', messages);
+    marbleAssert(messages).to.equal(expected);
+    marbleAssert(messages2).to.equal(expected2);
+    // marbleAssert(messages2).to.equal(expected);
+
+  });
+
+
+  xit('test trigger users cold obs', () => {
+    const {hot, cold, flush, getMessages, e} = rxSandbox.create();
+
+    const saveSuccessToPage$ = hot(' --a----b-----|', {a: true}).pipe(map(() => 1));
+    const pageFromPagination$ = hot('----c---d---|', {c: 2, d: 3});
+    const filter$ = hot('            ------f---g-|', {f: 'text1', g: 'text2'})
+      .pipe(startWith(''));
+
+    const page$ = merge(saveSuccessToPage$, pageFromPagination$);
+
+    const userList1$ =
+      combineLatest(
+        page$,
+        filter$.pipe(map(() => withLatestFrom()))
+      ).pipe(
+        switchMap(([page, flt]) => {
+            console.log('Page is', page);
+            console.log('Filter  is', flt);
+            return cold('u|', {u: {searchedPage: page, usedFilter: flt}});
+          }
+        ),
+        tap(page => console.log('Fetched the users:', page)),
+        shareReplay(1)
+      );
+
+    const userList2$ =
+      filter$.pipe(
+        switchMap((flt) => {
+            console.log('Page is', 1);
+            console.log('Filter  is', flt);
+            return cold('u|', {u: {searchedPage: 1, usedFilter: flt}});
+          }
+        ),
+      );
+
+    //   const final$ =
+    //     merge(
+    //       userList1$,
+    //       userList3$
+    //     ).pipe(tap(users)
+    // =>
+    //   {
+    //     console.log(users);
+    //   }
+    // )
+    //   ;
+    // const userList2$ =
+    //   page$.pipe(
+    //     withLatestFrom(filter$),
+    //     switchMap(([page, flt]) => {
+    //         console.log('Page is', page);
+    //         console.log('Filter  is', flt);
+    //         return cold('u|', {u: {searchedPage: page, usedFilter: flt}});
+    //       }
+    //     ),
+    //     tap(page => console.log('Fetched the users:', page)),
+    //     shareReplay(1)
+    //   );
+
+    const messages = getMessages(userList2$);
+    // const messages2 = getMessages(userList$);
+
+    const expected = e('--u-v-(wy)-z-t-|', {
+      u: {searchedPage: 1, usedFilter: ''},
+      v: {searchedPage: 2, usedFilter: ''},
+      w: {searchedPage: 1, usedFilter: ''},
+      y: {searchedPage: 1, usedFilter: 'text1'},
+      z: {searchedPage: 3, usedFilter: 'text1'},
+      t: {searchedPage: 3, usedFilter: 'text2'}
+    });
+
+    //
+    // hot('--a--b--|', {a: true}).pipe(
+    //   mergeMap(() => hot('---c--d-|', {c: 1}))
+    // );
+
+    flush();
+    console.log('usersMessages:', messages);
+    marbleAssert(messages).to.equal(expected);
+    // marbleAssert(messages2).to.equal(expected);
+
+  });
+
+
 });

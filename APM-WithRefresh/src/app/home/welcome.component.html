@@ -3,21 +3,42 @@
       {{pageTitle}}
     </div>
     <div class="card-body">
-      <div class="container-fluid">
-        <div class="text-center">
-          <img src="./assets/images/logo.jpg"
-               class="img-responsive center-block"
-               style="max-height:300px;padding-bottom:50px" />
-        </div>
-  
-        <div class="text-center">Developed by:</div>
-        <div class="text-center">
-          <h3>Deborah Kurata</h3>
-        </div>
-  
-        <div class="text-center">@deborahkurata</div>
-        <div class="text-center">
-          <a href="http://www.bit.ly/DeborahKsBlog">www.bit.ly/DeborahKsBlog</a>
+      <form [formGroup]="form" (submit)="save()">
+        <p>Find a free username</p>
+
+        <!--        <input-->
+        <!--          style="width: 220px"-->
+        <!--          type="text"-->
+        <!--          formControlName="name2"-->
+        <!--          placeholder="Search a free username (min 3 chars)"-->
+        <!--        >-->
+
+        <button [disabled]="form.invalid || form.pending">
+          Send
+          <span *ngIf="form.get('name').pending"> (searching)</span>
+        </button>
+
+        <!--        <p-->
+        <!--          style="color: red"-->
+        <!--                  *ngIf="form.get('name').errors?.userNameExists">Not available</p>-->
+
+        <hr>
+        <small>NOTE: Car1, Car2, Car3 are already taken. Try them</small>
+      </form>
+
+      <div class="card-footer">
+        <div class="example-container">
+          <mat-form-field appearance="fill">
+            <mat-label>Enter first</mat-label>
+            <input matInput placeholder="first" [formControl]="form.get('first')" required>
+            <mat-error *ngIf="form.get('first').invalid">{{getErrorMessage()}}</mat-error>
+          </mat-form-field>
+          <br/>
+          <mat-form-field appearance="fill">
+            <mat-label>Enter your email</mat-label>
+            <input matInput placeholder="pat@example.com" [formControl]="form.get('name')" required>
+            <mat-error *ngIf="form.get('name').invalid">{{getErrorMessage()}}</mat-error>
+          </mat-form-field>
         </div>
       </div>
     </div>
